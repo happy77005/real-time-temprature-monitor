@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Weather Data from Firebase</title>
+  <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-database.js"></script>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 20px;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+    th, td {
+      border: 1px solid #ddd;
+      padding: 8px;
+      text-align: left;
+    }
+    th {
+      background-color: #f4f4f4;
+    }
+  </style>
+</head>
+<body>
+  <h1>Weather Data</h1>
+  <table>
+    <thead>
+      <tr>
+        <th>Timestamp</th>
+        <th>Temperature (°C)</th>
+        <th>Humidity (%)</th>
+      </tr>
+    </thead>
+    <tbody id="data-table">     </tbody>
+  </table>
+
+  <script>
+
+    const firebaseConfig = {
+      apiKey: "YOUR_FIREBASE_API_KEY",
+      authDomain: "YOUR_AUTH_DOMAIN",
+      databaseURL: "YOUR_DATABASE_URL",
+      projectId: "YOUR_PROJECT_ID",
+      storageBucket: "YOUR_STORAGE_BUCKET",
+      messagingSenderId: "YOUR_MESSAGING_SENDER_ID",
+      appId: "YOUR_APP_ID"
+    };
+
+ 
+    const app = firebase.initializeApp(firebaseConfig);
+    const db = firebase.database(app);
+
+   
+    const weatherDataRef = firebase.database().ref("/weather_data");
+    weatherDataRef.on("value", (snapshot) => {
+      const data = snapshot.val();
+      const tableBody = document.getElementById("data-table");
+      tableBody.innerHTML = ""; 
+
+      for (const timestamp in data) {
+        const row = document.createElement("tr");
+        const temperature = data[timestamp].Temperature;
+        const humidity = data[timestamp].Humidity;
+
+        row.innerHTML = `
+          <td>${timestamp}</td>
+          <td>${temperature}</td>
+          <td>${humidity}</td>
+        `;
+        tableBody.appendChild(row);
+      }
+    });
+  </script>
+</body>
+</html>
